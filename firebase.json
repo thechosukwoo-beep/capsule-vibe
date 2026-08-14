@@ -1,0 +1,13 @@
+{
+  "auth": {
+    "providers": {
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "캡슐 바이브",
+        "supportEmail": "allhting11@gmail.com",
+        "authorizedRedirectUris": [
+          "http://localhost:3000"
+        ]
+      }
+    }
+  }
+}
