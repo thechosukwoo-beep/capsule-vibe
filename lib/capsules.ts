@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export type CapsuleImage = {
   public_url: string;
@@ -55,7 +55,7 @@ function mapCapsule(row: CapsuleRow): Capsule {
 }
 
 export async function listCapsules(): Promise<Capsule[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("capsules")
     .select(capsuleSelect)
     .order("open_at", { ascending: true });
@@ -68,7 +68,7 @@ export async function listCapsules(): Promise<Capsule[]> {
 }
 
 export async function getCapsule(id: string): Promise<Capsule | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from("capsules")
     .select(capsuleSelect)
     .eq("id", id)

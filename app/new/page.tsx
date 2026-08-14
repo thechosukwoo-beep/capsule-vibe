@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { formatOpenAt } from "@/lib/capsules";
 import { getFirebaseAuth } from "@/lib/firebase";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 type CapsuleResult = {
   id: string;
@@ -80,6 +80,7 @@ export default function NewCapsulePage() {
     setBurying(true);
 
     try {
+      const supabase = getSupabase();
       const { data: capsule, error: capsuleError } = await supabase
         .from("capsules")
         .insert({
