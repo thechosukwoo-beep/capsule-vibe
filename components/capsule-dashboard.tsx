@@ -9,6 +9,7 @@ import {
   listCapsules,
   type Capsule,
 } from "@/lib/capsules";
+import { DeleteCapsuleButton } from "@/components/delete-capsule-button";
 import { useAuth, useNow } from "@/components/use-auth";
 
 type Filter = "all" | "locked" | "open" | "mine";
@@ -135,7 +136,17 @@ export function CapsuleDashboard() {
             const cover = open ? capsule.images[0]?.public_url : undefined;
 
             return (
-              <li key={capsule.id}>
+              <li key={capsule.id} className="relative">
+                <div className="absolute right-3 top-3 z-10">
+                  <DeleteCapsuleButton
+                    capsuleId={capsule.id}
+                    senderUid={capsule.sender_uid}
+                    compact
+                    onDeleted={() =>
+                      setCapsules((rows) => rows.filter((row) => row.id !== capsule.id))
+                    }
+                  />
+                </div>
                 <Link
                   href={`/capsule/${capsule.id}`}
                   className="block h-full overflow-hidden rounded-3xl bg-white/80 shadow-sm ring-1 ring-amber-100 transition hover:-translate-y-0.5 hover:shadow-md"

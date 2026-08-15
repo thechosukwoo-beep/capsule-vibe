@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   formatCountdown,
@@ -9,6 +10,7 @@ import {
   isCapsuleOpen,
   type Capsule,
 } from "@/lib/capsules";
+import { DeleteCapsuleButton } from "@/components/delete-capsule-button";
 import { useNow } from "@/components/use-auth";
 
 const isDev = process.env.NODE_ENV === "development";
@@ -90,11 +92,21 @@ function OpenedContent({
 }
 
 export function CapsuleDetail({ capsule }: { capsule: Capsule }) {
+  const router = useRouter();
   const now = useNow();
   const [forceOpen, setForceOpen] = useState(false);
   const open = isCapsuleOpen(capsule.open_at, now) || forceOpen;
   const parts = getCountdownParts(capsule.open_at, now);
   const remaining = formatCountdown(capsule.open_at, now);
+  const deleteButton = (
+    <div className="mt-6 text-center">
+      <DeleteCapsuleButton
+        capsuleId={capsule.id}
+        senderUid={capsule.sender_uid}
+        onDeleted={() => router.replace("/")}
+      />
+    </div>
+  );
 
   if (open) {
     return (
@@ -103,6 +115,7 @@ export function CapsuleDetail({ capsule }: { capsule: Capsule }) {
           ← 대시보드
         </Link>
         <OpenedContent capsule={capsule} preview={forceOpen && !isCapsuleOpen(capsule.open_at, now)} />
+        {deleteButton}
       </div>
     );
   }
@@ -155,6 +168,7 @@ export function CapsuleDetail({ capsule }: { capsule: Capsule }) {
           ) : null}
         </div>
       </main>
+      {deleteButton}
     </div>
   );
 }
