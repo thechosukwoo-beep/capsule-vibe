@@ -1,4 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { createPageMetadata } from "@/lib/site";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "페이지를 찾을 수 없어요",
+  description: "주소가 바뀌었거나, 아직 묻히지 않은 캡슐이에요.",
+  path: "/",
+  robots: {
+    index: false,
+    follow: false,
+  },
+});
 
 export default function NotFound() {
   return (
