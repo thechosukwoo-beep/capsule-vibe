@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { FirebaseAnalytics } from "@/components/firebase-analytics";
 import { SiteHeader } from "@/components/site-header";
+import { WeatherWorld } from "@/components/weather-world";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -25,10 +26,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-amber-50 text-stone-800">
-        <FirebaseAnalytics />
-        <SiteHeader />
-        {children}
+      <body className="relative flex min-h-full flex-col text-stone-800">
+        <WeatherWorld>
+          <FirebaseAnalytics />
+          <SiteHeader />
+          {children}
+        </WeatherWorld>
       </body>
     </html>
   );
