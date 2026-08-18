@@ -10,25 +10,46 @@ import {
   isCapsuleOpen,
   type Capsule,
 } from "@/lib/capsules";
+import { CapsuleWeatherCard, CapsuleWeatherLine } from "@/components/capsule-weather";
+import {
+  CapsuleKeywords,
+  CapsuleQuote,
+  WeatherCapsuleArt,
+} from "@/components/weather-capsule-art";
 import { DeleteCapsuleButton } from "@/components/delete-capsule-button";
 import { useNow } from "@/components/use-auth";
 
 const isDev = process.env.NODE_ENV === "development";
 
-function SealedMark() {
+function SealedMark({
+  shape,
+  color,
+  accent,
+  seed,
+  weather,
+}: {
+  shape: Capsule["vibe"]["shape"];
+  color: string | null;
+  accent: string | null;
+  seed: string;
+  weather: Capsule["weather"];
+}) {
   return (
-    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-b from-amber-100 to-amber-200 shadow-inner">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-amber-800 text-amber-50 shadow-md">
-        <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M8 11V8a4 4 0 1 1 8 0v3"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          />
-          <rect x="5" y="11" width="14" height="10" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
-        </svg>
-      </div>
+    <div
+      className="mx-auto flex h-40 w-40 items-center justify-center rounded-full shadow-inner"
+      style={{
+        background: `radial-gradient(circle at 50% 30%, ${accent ?? "#fde68a"}, ${color ?? "#fbbf24"})`,
+      }}
+    >
+      <WeatherCapsuleArt
+        shape={shape}
+        color={color}
+        accent={accent}
+        sealed
+        seed={seed}
+        weather={weather}
+        className="h-32 w-28"
+      />
     </div>
   );
 }
@@ -41,7 +62,7 @@ function OpenedContent({
   preview?: boolean;
 }) {
   return (
-    <main className="mt-6 overflow-hidden rounded-3xl border border-amber-100 bg-white/80 shadow-xl shadow-amber-900/10">
+    <main className="mt-6 overflow-hidden rounded-3xl bg-white/55 shadow-xl shadow-stone-900/10 ring-1 ring-white/50 backdrop-blur-md">
       {capsule.images[0] ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -50,7 +71,21 @@ function OpenedContent({
           className="h-56 w-full object-cover"
         />
       ) : (
-        <div className="h-28 bg-gradient-to-br from-amber-100 to-amber-50" />
+        <div
+          className="flex h-40 items-center justify-center"
+          style={{
+            background: `radial-gradient(circle at 50% 20%, ${capsule.vibe.accent ?? "#fde68a"}, ${capsule.vibe.color ?? "#fbbf24"})`,
+          }}
+        >
+          <WeatherCapsuleArt
+            shape={capsule.vibe.shape}
+            color={capsule.vibe.color}
+            accent={capsule.vibe.accent}
+            seed={capsule.id}
+            weather={capsule.weather}
+            className="h-28 w-24"
+          />
+        </div>
       )}
       <div className="px-8 py-10">
         {preview ? (
@@ -64,12 +99,19 @@ function OpenedContent({
           {capsule.recipient}에게
         </h1>
         <p className="mt-2 text-sm text-stone-500">{formatOpenAt(capsule.open_at)}</p>
+        <CapsuleQuote quote={capsule.vibe.quote} />
+        <CapsuleKeywords
+          keywords={capsule.vibe.keywords}
+          color={capsule.vibe.color}
+          accent={capsule.vibe.accent}
+        />
         <div className="mt-8 rounded-2xl bg-amber-50/80 px-5 py-6">
           <p className="text-xs font-medium tracking-wide text-stone-400">편지</p>
           <p className="mt-3 whitespace-pre-wrap leading-relaxed text-stone-700">
             {capsule.letter}
           </p>
         </div>
+        <CapsuleWeatherCard weather={capsule.weather} />
         {capsule.images.length > 0 ? (
           <div className="mt-8">
             <p className="text-xs font-medium tracking-wide text-stone-400">사진</p>
@@ -125,10 +167,21 @@ export function CapsuleDetail({ capsule }: { capsule: Capsule }) {
       <Link href="/" className="text-sm text-stone-400 transition hover:text-stone-600">
         ← 대시보드
       </Link>
-      <main className="relative mt-6 overflow-hidden rounded-3xl border border-amber-100 bg-white/80 px-8 py-14 text-center shadow-xl shadow-amber-900/10">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-amber-100/80 to-transparent" />
+      <main className="relative mt-6 overflow-hidden rounded-3xl bg-white/50 px-8 py-14 text-center shadow-xl shadow-stone-900/10 ring-1 ring-white/50 backdrop-blur-md">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-32"
+          style={{
+            background: `linear-gradient(to bottom, ${capsule.vibe.accent ?? "#fde68a"}cc, transparent)`,
+          }}
+        />
         <div className="relative">
-          <SealedMark />
+          <SealedMark
+            shape={capsule.vibe.shape}
+            color={capsule.vibe.color}
+            accent={capsule.vibe.accent}
+            seed={capsule.id}
+            weather={capsule.weather}
+          />
           <p className="mt-8 text-sm font-medium tracking-wide text-amber-800">봉인된 캡슐</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-stone-800">
             아직 기간이 남았어요
@@ -138,7 +191,15 @@ export function CapsuleDetail({ capsule }: { capsule: Capsule }) {
             <br />
             {formatOpenAt(capsule.open_at)}에 열려요
           </p>
+          <CapsuleQuote quote={capsule.vibe.quote} />
+          <CapsuleKeywords
+            keywords={capsule.vibe.keywords}
+            color={capsule.vibe.color}
+            accent={capsule.vibe.accent}
+            align="center"
+          />
           <p className="mt-2 text-sm font-medium text-amber-900">앞으로 {remaining}</p>
+          <CapsuleWeatherLine weather={capsule.weather} />
           <div className="mt-8 grid grid-cols-4 gap-2">
             {[
               { label: "일", value: parts.days },
